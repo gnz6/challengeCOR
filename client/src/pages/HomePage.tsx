@@ -1,21 +1,31 @@
-import React from 'react'
-import { Layout } from '../components/layout/Layout'
-import { Card, Grid } from '@mui/material'
+import { Layout } from "../components/layout/Layout";
+import { Button, Grid } from "@mui/material";
+import ModalNewTask from "../components/ui/ModalNewTask";
+import TaskCard from "../components/ui/TaskCard";
+import { TaskList } from "../components/ui/TaskList";
 
 export const HomePage = () => {
   return (
     <Layout>
-      <Grid container spacing={2}>
+     
+     <Grid container >
+      <TaskList/>
 
-        <Grid item xs={12} sm={4}>
-          <Card>
-
-          </Card>
-
-        </Grid>
-
+     </Grid>
+     
+     
+      <Grid
+        container
+        spacing={2}
+        display={"flex"}
+        justifyContent={"flex-end"}
+        position={"absolute"}
+        bottom={10}
+        right={0}
+        width={"100vw"}
+      >
+          <ModalNewTask />
       </Grid>
-    
     </Layout>
-  )
-}
+  );
+};

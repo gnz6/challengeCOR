@@ -1,19 +1,15 @@
-import React from "react";
 import { ThemeProvider } from "@emotion/react";
 import { TaskProvider } from "./context/tasks";
-import { darkTheme } from "./themes";
-import { CssBaseline } from "@mui/material";
+import { darkTheme, mainTheme } from "./themes";
+import {  CssBaseline } from "@mui/material";
+import { HomePage } from "./pages/HomePage";
 
-interface Props {
-  children?: React.ReactNode;
-}
-
-function App({ children }: Props) {
+function App() {
   return (
     <TaskProvider>
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
-        {children}
+          <HomePage />
       </ThemeProvider>
     </TaskProvider>
   );
