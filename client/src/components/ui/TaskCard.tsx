@@ -5,7 +5,6 @@ import Typography from "@mui/material/Typography";
 import ClearIcon from "@mui/icons-material/Clear";
 import EditIcon from "@mui/icons-material/Edit";
 import { Grid, IconButton } from "@mui/material";
-import { shortDescription } from "../helpers/ShortDescription";
 import { useContext, useState } from "react";
 import { TaskContext } from "../../context/tasks";
 import { Types } from "mongoose";
@@ -32,7 +31,7 @@ export default function TaskCard({
     setModalOpen(true);
   };
 
-  const { deleteTask, updateTask, tasks } = useContext(TaskContext);
+  const { deleteTask } = useContext(TaskContext);
   const handleDelete = async (id: Types.ObjectId) => {
     console.log({ id });
     deleteTask(id);
@@ -51,16 +50,19 @@ export default function TaskCard({
           setOpen={setModalOpen}
         />
       ) : (
-        <Box sx={{ width: 275 }}>
+        <Box sx={{ width: 250, height:220 }}>
           <Card
             variant="outlined"
             sx={{
               backgroundColor: "#000",
               ":hover": { backgroundColor: "#222" },
+              height:"min",
+              width:"100%"
+      
             }}
           >
             <CardContent>
-              <Typography sx={{ color: "#aaa", textTransform: "capitalize" }}>
+              <Typography sx={{ color: "#aaa", textTransform: "capitalize"}}>
                 {status}
               </Typography>
               <Typography variant="h5" component="div">
@@ -69,7 +71,7 @@ export default function TaskCard({
               </Typography>
               <Typography variant="body2">
                 {description && description?.length > 30
-                  ? shortDescription(description)
+                  ? description.slice(0, 20)
                   : description}
                 <br />
               </Typography>
@@ -83,13 +85,13 @@ export default function TaskCard({
 
             <Grid
               container
-              gap={3}
+              gap={1}
               display={"flex"}
               justifyContent={"flex-end"}
             >
               <Grid>
                 <IconButton
-                  sx={{ ":hover": { color: "orange" }, border:"1px solid white" }}
+                  sx={{ ":hover": { color: "orange" }}}
                   onClick={(handleEditModal)}
                 >
                   <EditIcon />
@@ -109,8 +111,4 @@ export default function TaskCard({
       )}
     </>
   );
-}
-
-{
-  /* <EditTaskModal _id={_id} name={name} status={status} priority={priority} description={description}/> */
 }

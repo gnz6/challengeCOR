@@ -8,8 +8,6 @@ export interface ContextProps{
     addTask : ( task : Task ) => void;
     updateTask : (task : Task, {name, description, status, priority} : UpdateTask) => void;
     getAllTasks:()=> void;
-    filterByStatus:(status:string)=> void
-    filterByPriority:(priority:string)=> void
     deleteTask:(id: Types.ObjectId) => void
 }
 

@@ -8,8 +8,6 @@ type tasksType =
   | { type: "[Task] Update-Task"; payload: Task }
   | { type: "[Task] Initial-tasks"; payload: Task[] }
   | { type: "[Task] Delete-task"; payload: Task }
-  | { type: "[Task] Filter-Status"; payload: string }
-  | { type: "[Task] Filter-Priority"; payload: string }
   | { type: "[Task] Delete-Task"; payload: Object}
 
 export const tasksReducer = (
@@ -46,21 +44,6 @@ export const tasksReducer = (
         tasks: state.tasks.filter((task) => {
           task._id !== action.payload._id;
         }),
-      };
-      case "[Task] Filter-Priority":
-        const allTasks = state.tasks;
-        let taskPriority = action.payload === "" ? allTasks : allTasks.filter( t => t.priority === action.payload)
-        return{
-          ...state,
-          tasks: taskPriority
-        };
-
-        case "[Task] Filter-Status":
-      const tasks = state.tasks;
-      let taskStatus = action.payload === "" ? tasks : tasks.filter( t => t.status === action.payload)
-      return{
-        ...state,
-        tasks: taskStatus
       };
       case "[Task] Delete-Task":
         const tasksBeforeDelete = state.allTasks

@@ -10,7 +10,6 @@ export const HomePage = () => {
      
      <Grid container >
       <TaskList/>
-
      </Grid>
      
      
@@ -19,9 +18,9 @@ export const HomePage = () => {
         spacing={2}
         display={"flex"}
         justifyContent={"flex-end"}
-        position={"absolute"}
+        position={"fixed"}
         bottom={10}
-        right={0}
+        right={20}
         width={"100vw"}
       >
           <ModalNewTask />

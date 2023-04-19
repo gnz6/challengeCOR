@@ -9,9 +9,6 @@ import {
   Toolbar,
 } from "@mui/material";
 import TaskCard from "./TaskCard";
-import useLocalStorage from "../../hooks/useLocalStorage";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -30,66 +27,54 @@ const MenuProps = {
   },
 };
 
+const filters = [
+  { text: "Any", value: "" },
+  { text: "By priority: High", value: "high" },
+  { text: "By priority: Medium", value: "medium" },
+  { text: "By priority: Low", value: "low" },
+  { text: "By Status: New", value: "new" },
+  { text: "By Status: In-Process", value: "in-process" },
+  { text: "By Status: Completed", value: "completed" },
+];
 
 export const TaskList = () => {
-  const { tasks , getAllTasks , filterByPriority, filterByStatus} = useContext(TaskContext);
+  const { tasks, getAllTasks } = useContext(TaskContext);
 
-  const [currentPage, setCurrentPage] = useLocalStorage("currentPage", "");
-  const [search, setSearch] = useLocalStorage("search", "");
-
-  const itemsPerPage = () => {
-    if (search.length === 0 && currentPage === 0) return tasks.slice(currentPage, currentPage + 8);
-    let filteredResults  = tasks.length?tasks.filter((c) => c.name?.toLowerCase().includes(search?.toLowerCase())) : tasks;
-    if (currentPage === 0) return filteredResults.slice(currentPage, currentPage + 8)
-    return filteredResults.slice(currentPage, currentPage + 8);
-  };
-
-  const nextPage = () => {
-    if (
-      tasks.filter((c) => c.name.includes(search)).length > currentPage + 8 ) {
-      setCurrentPage(currentPage + 8);
-    }
-  };
-
-  const prevPage = () => {
-    if(currentPage<=0) return
-    if (currentPage > 0) {
-      setCurrentPage(currentPage - 8);
-    }
-  };
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value)
-    setCurrentPage(0)
-}
-
-
-  const filters = [
-    { text: "By priority: High", value: "high" },
-    { text: "By priority: Medium", value: "medium" },
-    { text: "By priority: Low", value: "low" },
-    { text: "By Status: New", value: "new" },
-    { text: "By Status: In-Process", value: "in-process" },
-    { text: "By Status: Completed", value: "completed" },
-  ];
-
+  const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("");
 
-  const handleChange = (event: SelectChangeEvent<typeof filter>) => {
-    const {
-      target: { value },
-    } = event;
-    setFilter(typeof value === "string" ? value : "");
-    if(filter === "high" ||"medium" || "low") filterByPriority(filter)
-    if(filter === "new" ||"in-process" || "completed") filterByStatus(filter)
-    
+  const itemsPerPage = () => {
+    if (search.length === 0 && !filter) return tasks;
+    if (filter === "new" || filter === "in-process" || filter === "completed")
+      return tasks.filter(
+        (t) => t.status[0].toLowerCase() === filter.toLowerCase()
+      );
+    if (filter === "high" || filter === "medium" || filter === "low")
+      return tasks.filter(
+        (t) => t.priority[0].toLowerCase() === filter.toLowerCase()
+      );
+
+    let filteredResults = tasks.length
+      ? tasks.filter((c) =>
+          c.name?.toLowerCase().includes(search?.toLowerCase())
+        )
+      : tasks;
+    return filteredResults;
+  };
+
+  console.log(itemsPerPage());
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setSearch(e.target.value);
+
+  const handleChange = ({ target }: SelectChangeEvent) => {
+    const { value } = target;
+    setFilter(value);
   };
 
   useEffect(() => {
     getAllTasks();
-  }, [itemsPerPage(), search, currentPage]);
-
-
+  }, [itemsPerPage(), search]);
 
   return (
     <Grid container>
@@ -113,7 +98,14 @@ export const TaskList = () => {
           </Select>
         </FormControl>
         <Grid container width={"75%"}>
-          <TextField sx={{ width: "100%", backgroundColor:"black" }} label="Search by Task Name..." name="search" value={search} onChange={handleSearch} variant="filled"/>
+          <TextField
+            sx={{ width: "100%", backgroundColor: "black" }}
+            label="Search by Task Name..."
+            name="search"
+            value={search}
+            onChange={handleSearch}
+            variant="filled"
+          />
         </Grid>
       </Toolbar>
 
@@ -127,10 +119,12 @@ export const TaskList = () => {
           </Typography>
         </Grid>
       ) : (
-        <Grid container display={"flex"} justifyContent={"center"} alignItems={"center"}>
-          <IconButton onClick={prevPage} sx={{ height:"100%", justifyContent:"center", alignItems:"center"}} disabled={currentPage - 8 < 0}>
-            <ArrowBackIosNewIcon  />
-          </IconButton>
+        <Grid
+          container
+          display={"flex"}
+          justifyContent={"center"}
+          alignItems={"center"}
+        >
           <List
             sx={{
               display: "flex",
@@ -141,20 +135,19 @@ export const TaskList = () => {
               alignItems: "center",
             }}
           >
-            {itemsPerPage().map(({ name, description, priority, status, _id }) => (
-              <TaskCard
-                key={description}
-                name={name}
-                description={description}
-                priority={priority}
-                status={status}
-                _id={_id!}
-              />
-            ))}
+            {itemsPerPage().map(
+              ({ name, description, priority, status, _id }) => (
+                <TaskCard
+                  key={description}
+                  name={name}
+                  description={description}
+                  priority={priority}
+                  status={status}
+                  _id={_id!}
+                />
+              )
+            )}
           </List>
-          <IconButton onClick={nextPage}>
-            <ArrowForwardIosIcon />
-          </IconButton>
         </Grid>
       )}
     </Grid>
